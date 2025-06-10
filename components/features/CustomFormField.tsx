@@ -38,7 +38,7 @@ const RenderField = ({ field, props }: { field: any; props: CustomFormFieldProps
             return (
                 <FormControl>
                     <Select onValueChange={field.onChange} value={field.value} disabled={props.disabled}>
-                        <SelectTrigger className="input">
+                        <SelectTrigger className="input capitalize">
                             <SelectValue placeholder={props.placeholder} />
                         </SelectTrigger>
                         <SelectContent>

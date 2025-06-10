@@ -20,11 +20,13 @@ export default function Navbar() {
             <div className="flex items-center gap-8">
                 <NavItems />        
                 <SignedOut>
-                    <SignInButton>
-                        <button className="btn-sign-in">
-                            Sign In
-                        </button>
-                    </SignInButton>
+                    <div className="flex items-center gap-2">
+                        <SignInButton>
+                            <button className="btn-sign-in">
+                                Sign In
+                            </button>
+                        </SignInButton>
+                    </div>
                 </SignedOut>
                 <SignedIn>
                     <UserButton />

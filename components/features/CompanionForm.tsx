@@ -35,10 +35,11 @@ export default function CompanionForm() {
             duration: 15,
         },
     });
+
     const onSubmit = (values: z.infer<typeof companionSchema>) => {
         setLoading(true);
         try {
-            
+            console.log(values);
         } catch (error) {
             
         } finally {
