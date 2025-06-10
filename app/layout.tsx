@@ -3,6 +3,7 @@ import { Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Navbar from "@/components/nav/Navbar";
+import { Toaster } from "sonner";
 
 const bricolage = Bricolage_Grotesque({
   variable: "--font-bricolage",
@@ -28,6 +29,7 @@ export default function RootLayout({
       >
         <ClerkProvider appearance={{ variables: { colorPrimary: '#fe5933' }}}>
           <Navbar />
+          <Toaster richColors position="top-center" />
           {children}
         </ClerkProvider>
       </body>

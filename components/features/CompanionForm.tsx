@@ -10,6 +10,9 @@ import { subjects } from "@/constants";
 import { Button } from "../ui/button";
 import { companionSchema } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
+import { createCompanion } from "@/lib/actions/companion.actions";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 
 const voices = [
@@ -24,6 +27,8 @@ const styles = [
 
 export default function CompanionForm() {
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
+
     const form = useForm<z.infer<typeof companionSchema>>({
         resolver: zodResolver(companionSchema),
         defaultValues: {
@@ -36,12 +41,20 @@ export default function CompanionForm() {
         },
     });
 
-    const onSubmit = (values: z.infer<typeof companionSchema>) => {
+    const onSubmit = async (values: z.infer<typeof companionSchema>) => {
         setLoading(true);
         try {
-            console.log(values);
+            const companion = await createCompanion(values);
+            console.log(companion);
+            if(companion) {
+                toast.success("Companion created successfully🤝");
+                router.push(`/companions/${companion.id}`);
+            } else {
+                toast.error("Failed to create companion");
+                router.push("/")
+            }
         } catch (error) {
-            
+            console.error("Failed to create companion", error);
         } finally {
             setLoading(false);
         }
