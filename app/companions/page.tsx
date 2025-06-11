@@ -1,7 +1,34 @@
-import React from 'react'
+import { getCompanions } from "@/lib/actions/companion.actions";
+import CompanionCard from "@/components/features/CompanionCard";
+import { getSubjectColor } from "@/lib/utils";
+import SearchInput from "@/components/features/SearchInput";
+import SubjectFilter from "@/components/features/SubjectFilter";
 
-export default function page() {
+export default async function CompanionsLibrary({ searchParams }: SearchParams) {
+    const filters = await searchParams;
+    const subject = filters.subject ? filters.subject : "";
+    const topic = filters.topic ? filters.topic : "";
+
+    const companions = await getCompanions({ subject, topic });
+
   return (
-    <div>page</div>
+    <main>
+        <section className="flex justify-between gap-4 max-sm:flex-col">
+          <h1>Companions Library</h1>
+          <div className="flex gap-4">
+            <SearchInput />
+            <SubjectFilter />
+          </div>
+        </section>
+        <section className="companions-grid">
+            {companions.map((companion) => (
+                <CompanionCard 
+                key={companion.id} 
+                {...companion} 
+                color={getSubjectColor(companion.subject)} 
+                />
+            ))}
+        </section>
+    </main>
   )
 }
