@@ -57,3 +57,64 @@ export const getCompanionById = async (id: string) => {
     return companion;
 };
 
+//add to session history
+export const addToSessionHistory = async (companionId: string) => {
+    const { userId } = await auth();
+
+    if (!userId) throw new Error("Unauthorized");
+
+    const supabase = createSupabaseClient();
+    const { data, error } = await supabase
+    .from("session_history")
+    .insert({
+        companion_id: companionId,
+        user_id: userId
+    });
+
+    if (error || !data) throw new Error(error?.message || "Failed to add to session history");
+    return data;
+};
+
+//get session history
+export const getSessionHistory = async (limit = 10) => {
+    const { userId } = await auth();
+
+    if (!userId) throw new Error("Unauthorized");
+
+    const supabase = createSupabaseClient();
+    const { data, error } = await supabase
+    .from("session_history")
+    .select(`companions:companion_id (*)`)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+
+    if (error || !data) throw new Error(error?.message || "Failed to get session history");
+    return data.map(({ companions }) => companions);
+};
+
+//get user sessions
+export const getUserSessions = async (userId: string, limit = 10) => {
+    const supabase = createSupabaseClient();
+    const { data, error } = await supabase
+    .from("session_history")
+    .select(`companions:companion_id (*)`)
+    .eq("user_id", userId)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+
+    if (error || !data) throw new Error(error?.message || "Failed to get user sessions");
+    return data.map(({ companions }) => companions);
+};
+
+//get user companions
+export const getUserCompanions = async (userId: string) => {
+    const supabase = createSupabaseClient();
+    const { data, error } = await supabase
+    .from("companions")
+    .select()
+    .eq("author", userId)
+
+    if (error || !data) throw new Error(error?.message || "Failed to get user companions");
+    return data;
+};
+
