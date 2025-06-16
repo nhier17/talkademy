@@ -70,7 +70,6 @@ export const Companion = ({ companionId, subject, topic, name, userName, userIma
             vapi.off('speech-end', onSpeechEnd);
             vapi.off('error', onError);
         }
-
         
     }, []);
 
@@ -82,6 +81,7 @@ export const Companion = ({ companionId, subject, topic, name, userName, userIma
 
     const handleCall = async () => {
         setCallStatus(CallStatus.CONNECTING);
+
         const assistantOverrides = {
             variableValues: { subject, topic, style },
             clientMessages: ["transcript"],
@@ -89,36 +89,37 @@ export const Companion = ({ companionId, subject, topic, name, userName, userIma
         }
         // @ts-expect-error
         vapi.start(configureAssistant(voice, style), assistantOverrides)
-    }
+    };
 
     const handleDisconnect = () => {
         setCallStatus(CallStatus.FINISHED);
         vapi.stop();
-    }
+    };
 
     return (
         <section className="flex flex-col h-[70vh]">
             <section className="flex gap-8 max-sm:flex-col">
                 <div className="companion-section">
                     <div className="companion-avatar" style={{ backgroundColor: getSubjectColor(subject)}}>
-                      <div className={
+                        <div
+                            className={
                             cn(
                                 'absolute transition-opacity duration-1000', callStatus === CallStatus.FINISHED || callStatus === CallStatus.INACTIVE ? 'opacity-1001' : 'opacity-0', callStatus === CallStatus.CONNECTING && 'opacity-100 animate-pulse'
                             )
                         }>
-                      <Image src={`/icons/${subject}.svg`} alt={subject} width={150} height={150} className="max-sm:w-fit" />
-                      </div>  
+                            <Image src={`/icons/${subject}.svg`} alt={subject} width={150} height={150} className="max-sm:w-fit" />
+                        </div>
 
-                      <div className={cn('absolute transition-opacity duration-1000', callStatus === CallStatus.ACTIVE ? 'opacity-100': 'opacity-0')}>
-                        <Lottie 
-                        lottieRef={lottieRef}
-                        animationData={soundwaves}
-                        autoPlay={false}
-                        className="companion-lottie"
-                        />
-                      </div>
+                        <div className={cn('absolute transition-opacity duration-1000', callStatus === CallStatus.ACTIVE ? 'opacity-100': 'opacity-0')}>
+                            <Lottie
+                                lottieRef={lottieRef}
+                                animationData={soundwaves}
+                                autoplay={false}
+                                className="companion-lottie"
+                            />
+                        </div>
                     </div>
-                    <p className="text-2xl font-bold">{name}</p>
+                    <p className="font-bold text-2xl">{name}</p>
                 </div>
 
                 <div className="user-section">
@@ -147,26 +148,26 @@ export const Companion = ({ companionId, subject, topic, name, userName, userIma
 
             <section className="transcript">
                 <div className="transcript-message no-scrollbar">
-                {messages.map((message, index) => {
-                  if(message.role === 'assistant') {
-                      return (
-                          <p key={index} className="max-sm:text-sm">
-                              {
-                                  name
-                                      .split(' ')[0]
-                                      .replace('/[.,]/g, ','')
-                              }: {message.content}
-                          </p>
-                      )
-                  } else {
-                     return <p key={index} className="text-primary max-sm:text-sm">
-                          {userName}: {message.content}
-                      </p>
-                  }
-                })}
+                    {messages.map((message, index) => {
+                        if(message.role === 'assistant') {
+                            return (
+                                <p key={index} className="max-sm:text-sm">
+                                    {
+                                        name
+                                            .split(' ')[0]
+                                            .replace('/[.,]/g, ','')
+                                    }: {message.content}
+                                </p>
+                            )
+                        } else {
+                           return <p key={index} className="text-primary max-sm:text-sm">
+                                {userName}: {message.content}
+                            </p>
+                        }
+                    })}
                 </div>
 
-                <div className="transcript-fade" />  
+                <div className="transcript-fade" />
             </section>
         </section>
     )

@@ -66,15 +66,12 @@ export const addToSessionHistory = async (companionId: string) => {
         user_id: userId
     });
 
-    if (error || !data) throw new Error(error?.message || "Failed to add to session history");
+    if (error || !data) throw new Error(error?.message);
     return data;
 };
 
 //get session history
 export const getSessionHistory = async (limit = 10) => {
-    const { userId } = await auth();
-
-    if (!userId) throw new Error("Unauthorized");
 
     const { data, error } = await supabase
     .from("session_history")
@@ -114,9 +111,8 @@ export const getUserCompanions = async (userId: string) => {
 export const newCompanionPermission = async () => {
     const { userId, has } = await auth();
 
-    if (!userId) throw new Error("Unauthorized");
-
     let limit = 0;
+
     if(has({ plan: 'pro' })) {
         return true;
     } else if(has({ feature: "3_companion_limit" })) {
@@ -126,54 +122,55 @@ export const newCompanionPermission = async () => {
     }
 
     const { data, error } = await supabase
-    .from("companion_permissions")
-    .select('id', {count: 'exact'})
-    .eq("author", userId)
+        .from('companions')
+        .select('id', { count: 'exact' })
+        .eq('author', userId)
 
-    if (error || !data) throw new Error(error?.message || "Failed to create companion permission");
+    if(error) throw new Error(error.message);
+
     const companionCount = data?.length;
 
-    if (companionCount >= limit) {
-        return false;
+    if(companionCount >= limit) {
+        return false
     } else {
         return true;
     }
 }; 
 
 //book marks
-export const addBookMark = async (companionId: string, path: string) => {
+export const addBookmark = async (companionId: string, path: string) => {
     const { userId } = await auth();
-
     if (!userId) return;
 
-    const { data, error } = await supabase
-    .from("bookmarks")
-    .insert({
-        companion_id: companionId,
-        user_id: userId
+    const { data, error } = await supabase.from("bookmarks").insert({
+      companion_id: companionId,
+      user_id: userId,
     });
-
-    if (error || !data) throw new Error(error?.message || "Failed to add to bookmarks");
+    if (error) {
+      throw new Error(error.message);
+    }
+    // Revalidate the path to force a re-render of the page
+  
     revalidatePath(path);
     return data;
-};
+  };
 
 //remove bookmark
 export const removeBookmark = async (companionId: string, path: string) => {
     const { userId } = await auth();
-
     if (!userId) return;
 
     const { data, error } = await supabase
-    .from("bookmarks")
-    .delete()
-    .eq("companion_id", companionId)
-    .eq("user_id", userId);
-
-    if (error || !data) throw new Error(error?.message || "Failed to remove bookmark");
+      .from("bookmarks")
+      .delete()
+      .eq("companion_id", companionId)
+      .eq("user_id", userId);
+    if (error) {
+      throw new Error(error.message);
+    }
     revalidatePath(path);
     return data;
-};
+  };
 
 //get bookmarked companions
 export const getBookmarkedCompanions = async (userId: string) => {
@@ -183,7 +180,7 @@ export const getBookmarkedCompanions = async (userId: string) => {
     .eq("user_id", userId);
 
     if (error || !data) throw new Error(error?.message || "Failed to get bookmarked companions");
-    
+
     return data.map(({ companions }) => companions);
 };
  

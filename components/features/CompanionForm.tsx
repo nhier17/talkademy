@@ -45,7 +45,6 @@ export default function CompanionForm() {
         setLoading(true);
         try {
             const companion = await createCompanion(values);
-            console.log(companion);
             if(companion) {
                 toast.success("Companion created successfully🤝");
                 router.push(`/companions/${companion.id}`);

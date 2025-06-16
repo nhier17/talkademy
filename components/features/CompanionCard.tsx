@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "../ui/button";
-import { addBookMark, removeBookmark } from "@/lib/actions/companion.actions";
+import { addBookmark, removeBookmark } from "@/lib/actions/companion.actions";
 
 interface CompanionCardProps {
     id: string;
@@ -31,7 +31,7 @@ export default function CompanionCard({
         if (bookmarked) {
            await removeBookmark(id, pathname);
         } else {
-            await addBookMark(id, pathname);
+            await addBookmark(id, pathname);
         }
     };
 

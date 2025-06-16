@@ -22,17 +22,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <ClerkProvider appearance={{ variables: { colorPrimary: '#fe5933' }}}>
     <html lang="en">
       <body
         suppressHydrationWarning={true}
         className={`${bricolage.variable} antialiased`}
       >
-        <ClerkProvider appearance={{ variables: { colorPrimary: '#fe5933' }}}>
+
           <Navbar />
           <Toaster richColors position="top-center" />
           {children}
-        </ClerkProvider>
       </body>
     </html>
+    </ClerkProvider>
   );
 }
