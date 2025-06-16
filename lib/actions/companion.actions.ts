@@ -139,5 +139,52 @@ export const newCompanionPermission = async () => {
         return true;
     }
 }; 
+
+//book marks
+export const addBookMark = async (companionId: string, path: string) => {
+    const { userId } = await auth();
+
+    if (!userId) return;
+
+    const { data, error } = await supabase
+    .from("bookmarks")
+    .insert({
+        companion_id: companionId,
+        user_id: userId
+    });
+
+    if (error || !data) throw new Error(error?.message || "Failed to add to bookmarks");
+    revalidatePath(path);
+    return data;
+};
+
+//remove bookmark
+export const removeBookmark = async (companionId: string, path: string) => {
+    const { userId } = await auth();
+
+    if (!userId) return;
+
+    const { data, error } = await supabase
+    .from("bookmarks")
+    .delete()
+    .eq("companion_id", companionId)
+    .eq("user_id", userId);
+
+    if (error || !data) throw new Error(error?.message || "Failed to remove bookmark");
+    revalidatePath(path);
+    return data;
+};
+
+//get bookmarked companions
+export const getBookmarkedCompanions = async (userId: string) => {
+    const { data, error } = await supabase
+    .from("bookmarks")
+    .select(`companions:companion_id (*)`)
+    .eq("user_id", userId);
+
+    if (error || !data) throw new Error(error?.message || "Failed to get bookmarked companions");
+    
+    return data.map(({ companions }) => companions);
+};
  
 
